@@ -34,6 +34,8 @@ if (isset($_GET["id"])){
     } else{
       $conn->prepare("DELETE FROM contacts WHERE id = :id")->execute([":id" => $id]);
       //$statement->bindValue(":id", $id);
+      $_SESSION["flash"] = ["message" => "Contact {$contac["name"]} Deleted."];
+
       header("Location: home.php");
       return;
     }
