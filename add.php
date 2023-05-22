@@ -1,18 +1,32 @@
 <?php
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $contact = [
+  require "dataBase.php";
+  /* $contact = [
     "name" => $_POST["name"],
     "phone_number" => $_POST["phone_number"]
-  ];
-  if (file_exists("contacts.json")){
+  ]; */
+  $name = $_POST["name"];
+  $phoneNumber = $_POST["phone_number"];
+  /* if (file_exists("contacts.json")){
     $contacts = json_decode(file_get_contents("contacts.json"), true);
   
   }else{
     $contacts = [];
   }
   $contacts[] = $contact;
-  file_put_contents("contacts.json", json_encode($contacts));
-  header("Location: index.php");
+  file_put_contents("contacts.json", json_encode($contacts)); */
+  
+  $conexion = new Conexion();
+  $conn = $conexion->conectar();
+  //$resp = $conn->query("INSERT INTO contacts (name, phone_number) VALUES ('".$contact["name"]."','".$contact["phone_number"]."')");
+  $statement = $conn->prepare("INSERT INTO contacts (name, phone_number) VALUES ('$name','$phoneNumber')");
+  $resp = $statement->execute();
+  if($resp){
+    header("Location: index.php");
+  }else{
+    die("Failed insert to DataBase...");
+  }
 }
 
 include("./include/header.php"); 
