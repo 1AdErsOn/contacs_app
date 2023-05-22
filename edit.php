@@ -1,6 +1,12 @@
 <?php
 
 require "dataBase.php";
+session_start();
+if (!isset($_SESSION["user"])){
+  header("Location: login.php");
+  return;
+}
+
 if (isset($_GET["id"])){
   $id = $_GET["id"];
   $conexion = new Conexion();
@@ -36,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       ":id" => $id
     ]);
     header("Location: home.php");
+    return;
   }
 }
 

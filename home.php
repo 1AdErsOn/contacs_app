@@ -7,6 +7,12 @@
   $contacts = [];
 } */
 require "dataBase.php";
+session_start();
+if (!isset($_SESSION["user"])){
+  header("Location: login.php");
+  return;
+}
+//var_dump($_COOKIE);
 $conexion = new Conexion();
 $conn = $conexion->conectar();
 
@@ -22,6 +28,7 @@ if (isset($_GET["id"])){
     $conn->prepare("DELETE FROM contacts WHERE id = :id")->execute([":id" => $id]);
     //$statement->bindValue(":id", $id);
     header("Location: home.php");
+    return;
   }
 }
 

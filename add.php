@@ -1,5 +1,11 @@
 <?php
 
+session_start();
+if (!isset($_SESSION["user"])){
+  header("Location: login.php");
+  return;
+}
+
 $error = null;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   require "dataBase.php";
@@ -31,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $statement->bindValue(":phone_number", $phoneNumber);
     $resp = $statement->execute();
     header("Location: home.php");
+    return;
   }
 }
 
