@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $statement->bindValue(":name", $name);
     $statement->bindValue(":phone_number", $phoneNumber);
     $resp = $statement->execute();
-    header("Location: index.php");
+    header("Location: home.php");
   }
 }
 
