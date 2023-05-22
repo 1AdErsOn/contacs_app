@@ -7,8 +7,8 @@ if (!isset($_SESSION["user"])){
   return;
 }
 
-if (isset($_GET["id"])){
-  $id = $_GET["id"];
+if (isset($_GET["id"]) || isset($_SESSION["id"])){
+  $id = (isset($_GET["id"])) ? $_GET["id"] : $_SESSION["id"];
   $conexion = new Conexion();
   $conn = $conexion->conectar();
   $statement = $conn->prepare("SELECT * FROM contacts WHERE id = :id LIMIT 1");
@@ -19,6 +19,7 @@ if (isset($_GET["id"])){
     return;
   }
   $contact = $statement->fetch(PDO::FETCH_ASSOC);
+  $_SESSION["id"] = $contact["id"];
   $userID = $_SESSION["user"]["id"];
   if ($contact["user_id"] != $userID){
     http_response_code(403);
@@ -47,7 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       ":phone" => $phoneNumber,
       ":id" => $id
     ]);
-
+    if (isset($_SESSION["id"])){
+      unset($_SESSION["id"]);
+    }
     $_SESSION["flash"] = ["message" => "Contact {$name} Updated."];
 
     header("Location: home.php");
@@ -61,7 +64,7 @@ include("./include/header.php");
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">Add New Contact</div>
+        <div class="card-header">Edit Contact</div>
         <div class="card-body">
           <?php if ($error): ?>
             <p class="text-danger">
