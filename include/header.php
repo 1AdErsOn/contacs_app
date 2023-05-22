@@ -26,3 +26,6 @@
   <title>Contacts App</title>
 </head>
 <body>
+  <?php include("./include/navbar.php"); ?>
+  <main>
+  <!-- content here -->

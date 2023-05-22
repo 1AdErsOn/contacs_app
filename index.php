@@ -9,68 +9,52 @@
 require "dataBase.php";
 $conexion = new Conexion();
 $conn = $conexion->conectar();
+
+if (isset($_GET["id"])){
+  $id = $_GET["id"];
+  $statement = $conn->prepare("SELECT * FROM contacts WHERE id = :id");
+  $statement->execute([":id" => $id]);
+  if ($statement->rowCount() == 0){
+    http_response_code(404);
+    echo("HTTP 404 NOT FOUND");
+    return;
+  } else{
+    $conn->prepare("DELETE FROM contacts WHERE id = :id")->execute([":id" => $id]);
+    //$statement->bindValue(":id", $id);
+    header("Location: index.php");
+  }
+}
+
 $contacts = $conn->query("SELECT * FROM contacts");
 include("./include/header.php");
 
 ?>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand font-weight-bold" href="#">
-        <img class="mr-2" src="./static/img/logo.png" />
-        ContactsApp
-      </a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="./add.php">Add Contact</a>
-          </li>
-        </ul>
+<div class="container pt-4 p-3">
+  <div class="row">
+    
+    <?php if ($contacts->rowCount() == 0): ?>
+      <div class="col-md-4 mx-auto">
+        <div class="card card-body text-center">
+          <p>No contacts saved yet</p>
+          <a href="./add.php">Add One!</a>
+        </div>
       </div>
-    </div>
-  </nav>
-
-  <main>
-    <div class="container pt-4 p-3">
-      <div class="row">
-        
-        <?php if ($contacts->rowCount() == 0): ?>
-          <div class="col-md-4 mx-auto">
-            <div class="card card-body text-center">
-              <p>No contacts saved yet</p>
-              <a href="./add.php">Add One!</a>
-            </div>
+    <?php endif ?>
+    <?php foreach ($contacts as $contact): ?>
+      <div class="col-md-4 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <h3 class="card-title text-capitalize"><?= $contact["name"] ?></h3>
+            <p class="m-2"><?= $contact["phone_number"] ?></p>
+            <a href="edit.php?id=<?= $contact["id"] ?>" class="btn btn-secondary mb-2">Edit Contact</a>
+            <a href="index.php?id=<?= $contact["id"] ?>" class="btn btn-danger mb-2">Delete Contact</a>
           </div>
-        <?php endif ?>
-        <?php foreach ($contacts as $contact): ?>
-          <div class="col-md-4 mb-3">
-            <div class="card text-center">
-              <div class="card-body">
-                <h3 class="card-title text-capitalize"><?= $contact["name"] ?></h3>
-                <p class="m-2"><?= $contact["phone_number"] ?></p>
-                <a href="edit.php?id=<?= $contact["id"] ?>" class="btn btn-secondary mb-2">Edit Contact</a>
-                <a href="delete.php?id=<?= $contact["id"] ?>" class="btn btn-danger mb-2">Delete Contact</a>
-              </div>
-            </div>
-          </div>
-        <?php endforeach ?>
-
+        </div>
       </div>
-    </div>
-  </main>
+    <?php endforeach ?>
+
+  </div>
+</div>
 
 <?php include("./include/footer.php"); ?>
