@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $name = $_POST["name"];
     $phoneNumber = $_POST["phone_number"];
+    $id = $_SESSION["user"]["id"];
     /* if (file_exists("contacts.json")){
       $contacts = json_decode(file_get_contents("contacts.json"), true);
     
@@ -32,10 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conexion = new Conexion();
     $conn = $conexion->conectar();
     //$resp = $conn->query("INSERT INTO contacts (name, phone_number) VALUES ('".$contact["name"]."','".$contact["phone_number"]."')");
-    $statement = $conn->prepare("INSERT INTO contacts (name, phone_number) VALUES (:name,:phone_number)");
-    $statement->bindValue(":name", $name);
-    $statement->bindValue(":phone_number", $phoneNumber);
-    $resp = $statement->execute();
+    $statement = $conn->prepare("INSERT INTO contacts (name, user_id, phone_number) VALUES (:name, :id, :phone)");
+    $resp = $statement->execute([
+      ":name" => $name,
+      ":id" => $id,
+      ":phone" => $phoneNumber
+    ]);
     header("Location: home.php");
     return;
   }

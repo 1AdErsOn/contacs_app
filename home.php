@@ -32,7 +32,13 @@ if (isset($_GET["id"])){
   }
 }
 
-$contacts = $conn->query("SELECT * FROM contacts");
+$id = $_SESSION["user"]["id"];
+$statement = $conn->prepare("SELECT * FROM contacts WHERE user_id = :id");
+$statement->execute([":id" => $id]);
+$contacts = $statement->fetchAll();
+/* var_dump($contacts);
+die(); */
+
 include("./include/header.php");
 
 ?>
@@ -40,7 +46,7 @@ include("./include/header.php");
 <div class="container pt-4 p-3">
   <div class="row">
     
-    <?php if ($contacts->rowCount() == 0): ?>
+    <?php if ($statement->rowCount() == 0): ?>
       <div class="col-md-4 mx-auto">
         <div class="card card-body text-center">
           <p>No contacts saved yet</p>
