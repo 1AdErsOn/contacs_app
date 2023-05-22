@@ -25,10 +25,18 @@ if (isset($_GET["id"])){
     echo("HTTP 404 NOT FOUND");
     return;
   } else{
-    $conn->prepare("DELETE FROM contacts WHERE id = :id")->execute([":id" => $id]);
-    //$statement->bindValue(":id", $id);
-    header("Location: home.php");
-    return;
+    $contact = $statement->fetch(PDO::FETCH_ASSOC);
+    $userID = $_SESSION["user"]["id"];
+    if ($contact["user_id"] != $userID){
+      http_response_code(403);
+      echo("HTTP 404 UNAUTHORIZED");
+      return;
+    } else{
+      $conn->prepare("DELETE FROM contacts WHERE id = :id")->execute([":id" => $id]);
+      //$statement->bindValue(":id", $id);
+      header("Location: home.php");
+      return;
+    }
   }
 }
 

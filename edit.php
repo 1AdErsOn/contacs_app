@@ -19,6 +19,12 @@ if (isset($_GET["id"])){
     return;
   }
   $contact = $statement->fetch(PDO::FETCH_ASSOC);
+  $userID = $_SESSION["user"]["id"];
+  if ($contact["user_id"] != $userID){
+    http_response_code(403);
+    echo("HTTP 404 UNAUTHORIZED");
+    return;
+  }
 }
 
 $error = null;
