@@ -22,6 +22,11 @@
 
   <!-- Static Content -->
   <link rel="stylesheet" href="./static/css/index.css" />
+  <?php $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+    if ($uri == "/contacs_app/" || $uri == "/contacs_app/index.php"){
+  ?>
+    <script defer src="./static/js/welcome.js"></script>
+  <?php } ?>
 
   <title>Contacts App</title>
 </head>
